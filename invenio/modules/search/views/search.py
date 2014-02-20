@@ -33,7 +33,7 @@ from ..cache import get_search_query_id, get_collection_name_from_cache
 from ..facet_builders import get_current_user_records_that_can_be_displayed, \
     faceted_results_filter, FacetLoader
 from ..forms import EasySearchForm
-from ..models import Collection
+from ..models import Collection, CollectionUserFavourite
 from ..washers import wash_search_urlargd
 from flask.ext.menu import register_menu
 from invenio.base.signals import websearch_before_browse, websearch_before_search
@@ -43,6 +43,7 @@ from invenio.base.i18n import _
 from invenio.base.decorators import wash_arguments, templated
 from flask.ext.breadcrumbs import \
     register_breadcrumb, current_breadcrumbs, default_breadcrumb_root
+from invenio.ext.sqlalchemy import db
 from invenio.ext.template.context_processor import \
     register_template_context_processor
 from invenio.utils.pagination import Pagination
@@ -521,3 +522,29 @@ def export(collection, of):
     # Get list of integers with record IDs.
     recids = request.values.getlist('recid', type=int)
     return response_formated_records(recids, collection, of)
+
+
+@blueprint.route('/collection/<name>/favourite', methods=['GET'])
+def favourite(name):
+    """\
+    Toggle the favourite preferences for the current user towards the given
+    collection and redirects back.
+    """
+    collection = Collection.query.filter(Collection.name == name).first_or_404()
+
+    cuf = CollectionUserFavourite.query. \
+        filter(CollectionUserFavourite.id_collection == collection.id). \
+        filter(CollectionUserFavourite.id_user == current_user.get_id()). \
+        first()
+
+    if cuf is not None:
+        db.session.delete(cuf)
+        flash(_("Okay, {0} has been deleted from your favourites.").format(name))
+    else:
+        cuf = CollectionUserFavourite(id_user=current_user.get_id(),
+                                      id_collection=collection.id)
+        flash(_("Congrats, {0} has been added to your favourites!").format(name))
+        db.session.add(cuf)
+
+    db.session.commit()
+    return redirect(request.referrer)

@@ -23,6 +23,7 @@ WebSearch database models.
 
 # General imports.
 import re
+from datetime import datetime
 from operator import itemgetter
 from flask import g, url_for
 from invenio.base.globals import cfg
@@ -417,6 +418,35 @@ class Collection(db.Model):
         breadcrumbs.append(crumb)
         return breadcrumbs
 
+    def is_favourite(self, user_info):
+        """\
+        Says if yes or no, this user marked the collection has his favourite.
+        """
+        return 1 == db.object_session(self).query(CollectionUserFavourite).\
+                filter(CollectionUserFavourite.id_collection==self.id).\
+                filter(CollectionUserFavourite.id_user==user_info.get_id()).\
+                count()
+
+
+class CollectionUserFavourite(db.Model):
+    """\
+    Users can save a bag of favourite collections.
+    """
+    __tablename__ = 'collection_user_favourite'
+    id = db.Column(db.Integer(15, unsigned=True), primary_key=True,
+                   autoincrement=True)
+    id_collection = db.Column(db.MediumInteger(9, unsigned=True),
+                              db.ForeignKey(Collection.id))
+    id_user = db.Column(db.Integer(15, unsigned=True),
+                        db.ForeignKey(User.id))
+    created_at = db.Column(db.DateTime(True), default=datetime.now)
+    updated_at = db.Column(db.DateTime(True), onupdate=datetime.now)
+
+    user = db.relationship(User, backref='favourite_collections')
+    collection = db.relationship(Collection, backref='user_favourites')
+
+    def __str__(self):
+        return "{0} - {1}".format(self.collection.name, self.user)
 
 
 class Collectionname(db.Model):

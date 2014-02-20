@@ -98,10 +98,14 @@ search_also, search_form, search_form_javascript with context -%}
 {%- block index -%}
 <div class="row websearch clearfix"><!-- row 2 -->
   {%- block portalbox_lt -%}{{ portalbox_sidebar(portalboxes.lt, class="col-md-2") }}{%- endblock -%}
-
   {%- block index_right -%}
   {% if collection.collection_children_r %}
     <div class="col-md-{{ '4' if collection.collection_children_v else '8' }} collection clearfix">
+      <h3><a href="{{ url_for('search.favourite', name=collection.name, ln=g.ln)|safe }}"><span class="glyphicon glyphicon-star
+        {%- if not collection.is_favourite(current_user) -%}
+          -empty
+        {%- endif -%}
+        "></span></a> {{ collection.name }}</h3>
       <h4>{{ _("Narrow by collection:") }}</h4>
       {{ collection_tree(collection.collection_children_r, limit=2, class="nav nav-list clearfix") }}
     </div>
@@ -112,7 +116,12 @@ search_also, search_form, search_form_javascript with context -%}
       {% else %}
         {% if collection.reclist %}
         <div class="page-header">
-          <h3>{{ collection.name + ":" }}</h3>
+          <h3><a href="{{ url_for('search.favourite', name=collection.name, ln=g.ln)|safe }}"><span class="glyphicon glyphicon-star
+            {%- if not collection.is_favourite(current_user) -%}
+              -empty
+            {%- endif -%}
+          "></span></a> {{ collection.name }}</h3>
+          <h4>{{ _("Narrow by collection:") }}</h4>
         </div>
         {%- set of = request.values.get('of', 'hb') -%}
         {% for recid in collection.reclist[-10:]|reverse %}
