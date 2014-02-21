@@ -3,7 +3,7 @@ rdflib==2.4.2
 reportlab==2.5
 python-dateutil<=1.9999
 python-magic==0.4.2
-http://www.reportlab.com/ftp/pyRXP-1.16-daily-unix.tar.gz#egg=pyRXP-1.16
+https://www.reportlab.com/ftp/pyRXP-1.16-daily-unix.tar.gz#egg=pyRXP-1.16
 numpy==1.7.0
 lxml==3.1.2
 mechanize==0.2.5
@@ -53,7 +53,7 @@ git+git://github.com/inveniosoftware/flask-breadcrumbs.git#egg=Flask-Breadcrumbs
 git+https://github.com/inveniosoftware/flask-registry.git#egg=Flask-Registry-0.1
 Flask-Script==0.6.6
 #Flask-Testing==0.4
-http://github.com/jarus/flask-testing/zipball/master#egg=Flask-Testing-0.4.1
+https://github.com/jarus/flask-testing/zipball/master#egg=Flask-Testing-0.4.1
 Flask-WTF==0.9.3
 Cerberus==0.5
 git+git://github.com/jirikuncar/Flask-Collect.git@app-static-files#egg=Flask-Collect-0.2.2

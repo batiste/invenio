@@ -1,2 +1,2 @@
 qrcode
-PIL
+Pillow<2.0.0
